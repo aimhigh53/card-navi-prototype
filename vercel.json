@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "functions": {
+    "api/recommend.js": {
+      "maxDuration": 30
+    }
+  },
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api/$1" }
+  ]
+}

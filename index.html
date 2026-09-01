@@ -2,137 +2,133 @@
 <html lang="ko">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>카드내비 MVP</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>카드내비 AI</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans KR", sans-serif; background:#f4f7fb; color:#151922; line-height:1.5; }
-    .app { max-width:430px; min-height:100vh; margin:0 auto; padding:18px 16px 28px; }
-    .top { display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; }
-    .brand { font-weight:950; letter-spacing:-.05em; font-size:21px; }
-    .step-pill { color:#4f6df5; background:#eef2ff; padding:7px 10px; border-radius:999px; font-weight:900; font-size:12px; }
-    .progress { height:6px; background:#e6ebf3; border-radius:999px; overflow:hidden; margin-bottom:18px; }
-    .bar { height:100%; width:33%; background:#171923; border-radius:999px; transition:width .25s ease; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans KR", sans-serif; background:#f3f6fb; color:#101318; }
+    .app { max-width:430px; min-height:100dvh; margin:0 auto; padding:18px 16px 28px; }
+    .top { display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; }
+    .brand { font-weight:950; font-size:22px; letter-spacing:-.055em; }
+    .step { padding:7px 10px; border-radius:999px; background:#eef2ff; color:#4353d6; font-weight:900; font-size:12px; }
+    .progress { height:6px; border-radius:999px; background:#e5ebf3; overflow:hidden; margin-bottom:16px; }
+    .bar { height:100%; width:33.3%; background:#101318; transition:.22s; }
     .screen { display:none; } .screen.active { display:block; animation:enter .18s ease; }
-    @keyframes enter { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
-    .hero,.panel { background:#fff; border:1px solid #e6ebf3; box-shadow:0 18px 50px rgba(15,23,42,.08); }
-    .hero { border-radius:28px; padding:24px; margin-bottom:14px; }
-    .panel { border-radius:24px; padding:18px; margin-top:12px; }
-    .eyebrow { color:#4f6df5; font-weight:950; font-size:13px; margin-bottom:10px; }
-    h1 { font-size:34px; line-height:1.05; letter-spacing:-.065em; margin-bottom:12px; }
-    h2 { font-size:25px; line-height:1.15; letter-spacing:-.045em; margin-bottom:8px; }
-    .sub { color:#687182; font-size:15px; }
-    .field { display:grid; gap:8px; margin-top:16px; }
-    label { color:#626c7d; font-size:13px; font-weight:850; }
-    input,textarea,select { width:100%; border:1px solid #dbe2ed; border-radius:16px; padding:15px 14px; font-size:17px; background:#fff; color:#151922; outline:none; }
-    textarea { min-height:94px; resize:none; }
-    input:focus,textarea:focus,select:focus { border-color:#4f6df5; box-shadow:0 0 0 4px rgba(79,109,245,.13); }
-    .quick { display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
-    .quick button { padding:10px 12px; border-radius:999px; font-size:13px; background:#f1f5f9; color:#334155; }
+    @keyframes enter { from{opacity:0; transform:translateY(8px)} to{opacity:1; transform:translateY(0)} }
+    .hero,.panel { background:#fff; border:1px solid #e4e9f1; border-radius:28px; box-shadow:0 18px 48px rgba(15,23,42,.07); }
+    .hero { padding:24px; margin-bottom:12px; }
+    .panel { padding:18px; margin-top:12px; }
+    .eyebrow { color:#5267f5; font-weight:950; font-size:13px; margin-bottom:10px; }
+    h1 { font-size:34px; line-height:1.04; letter-spacing:-.065em; margin-bottom:12px; }
+    h2 { font-size:24px; letter-spacing:-.045em; margin-bottom:8px; }
+    .sub { color:#667085; font-size:15px; line-height:1.55; }
+    .field { margin-top:16px; display:grid; gap:8px; }
+    label { font-weight:850; color:#596273; font-size:13px; }
+    input,select { width:100%; border:1px solid #dbe2ed; border-radius:17px; padding:15px 14px; font-size:17px; background:#fff; color:#101318; outline:none; }
+    input:focus,select:focus { border-color:#5367f5; box-shadow:0 0 0 4px rgba(83,103,245,.12); }
     .chips { display:grid; grid-template-columns:1fr 1fr; gap:9px; margin-top:10px; }
-    .chip { border:1px solid #e1e7f0; background:#fbfcff; color:#293241; border-radius:16px; padding:13px 12px; text-align:left; font-weight:850; cursor:pointer; }
+    .chip { border:1px solid #e0e7f0; background:#fbfcff; color:#273142; border-radius:17px; padding:13px 12px; text-align:left; font-weight:900; cursor:pointer; }
     .chip small { display:block; color:#7a8494; font-weight:750; margin-top:2px; }
-    .chip.active { background:#171923; color:#fff; border-color:#171923; } .chip.active small { color:#cfd6e4; }
-    .actions { display:grid; grid-template-columns:1fr 1.6fr; gap:9px; margin-top:18px; } .actions.single { grid-template-columns:1fr; }
-    button { border:0; border-radius:17px; padding:15px 16px; background:#171923; color:white; font-size:16px; font-weight:950; cursor:pointer; }
+    .chip.active { background:#101318; color:#fff; border-color:#101318; } .chip.active small { color:#cbd5e1; }
+    .card-pick { display:grid; grid-template-columns:1fr 44px; gap:8px; margin-top:10px; }
+    .remove { padding:0; border-radius:15px; background:#f1f5f9; color:#334155; }
+    .small-btn { padding:11px 13px; border-radius:999px; font-size:13px; background:#eef2ff; color:#3345b8; }
+    .actions { display:grid; grid-template-columns:1fr 1.55fr; gap:9px; margin-top:18px; } .actions.single { grid-template-columns:1fr; }
+    button { border:0; border-radius:18px; padding:15px 16px; background:#101318; color:white; font-size:16px; font-weight:950; cursor:pointer; }
     button.secondary { background:#eef2ff; color:#3345b8; }
-    .summary-grid { display:grid; gap:10px; margin-top:14px; }
-    .metric { background:#f8fafc; border:1px solid #edf1f6; border-radius:18px; padding:15px; }
-    .metric small { display:block; color:#6b7280; font-weight:850; margin-bottom:4px; }
-    .metric strong { font-size:21px; letter-spacing:-.035em; }
-    .strategy { border:1px solid #e7edf5; border-radius:20px; padding:16px; background:#fff; margin-top:10px; }
-    .strategy-top { display:flex; justify-content:space-between; align-items:flex-start; gap:10px; }
+    button:disabled { opacity:.55; cursor:not-allowed; }
+    .summary { display:grid; gap:10px; margin-top:12px; }
+    .metric { background:#f8fafc; border:1px solid #edf1f6; border-radius:19px; padding:15px; }
+    .metric small { color:#687385; font-weight:850; display:block; margin-bottom:4px; }
+    .metric strong { font-size:21px; letter-spacing:-.04em; }
+    .plan { border:1px solid #e7edf5; border-radius:21px; padding:16px; background:#fff; margin-top:10px; }
+    .plan-top { display:flex; justify-content:space-between; gap:10px; align-items:flex-start; }
     .badge { white-space:nowrap; font-size:12px; font-weight:950; padding:7px 10px; border-radius:999px; background:#ecfdf5; color:#047857; }
-    .amount { font-size:24px; font-weight:950; letter-spacing:-.04em; margin-top:8px; }
-    .reason { color:#4b5563; font-size:14px; margin-top:4px; }
-    .tags { display:flex; gap:6px; flex-wrap:wrap; margin-top:10px; }
-    .tag { font-size:12px; padding:6px 9px; border-radius:999px; background:#f1f5f9; color:#475569; font-weight:800; }
-    .autofill { color:#6b7280; font-size:13px; margin-top:10px; }
-    .toast { position:fixed; left:50%; bottom:18px; transform:translateX(-50%); background:#171923; color:white; padding:12px 15px; border-radius:999px; opacity:0; transition:opacity .2s; font-size:14px; } .toast.show { opacity:1; }
+    .money { font-size:28px; font-weight:950; letter-spacing:-.05em; margin-top:8px; }
+    .reason { color:#414b5a; font-size:14px; line-height:1.55; margin-top:4px; }
+    .tags { display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; }
+    .tag { padding:6px 9px; border-radius:999px; background:#f1f5f9; color:#475569; font-size:12px; font-weight:850; }
+    .loading { display:none; align-items:center; gap:8px; color:#596273; font-size:14px; margin-top:12px; }
+    .loading.on { display:flex; }
+    .dot { width:8px; height:8px; border-radius:50%; background:#5367f5; animation:pulse .8s infinite alternate; }
+    @keyframes pulse { to { transform:scale(1.5); opacity:.5; } }
+    .error { display:none; margin-top:12px; padding:13px; border-radius:16px; background:#fff1f2; color:#be123c; font-weight:800; font-size:14px; line-height:1.45; }
+    .error.on { display:block; }
   </style>
 </head>
 <body>
   <main class="app">
-    <div class="top"><div class="brand">카드내비</div><div class="step-pill" id="stepText">1 / 3</div></div>
+    <div class="top"><div class="brand">카드내비 AI</div><div class="step" id="stepText">1 / 3</div></div>
     <div class="progress"><div class="bar" id="bar"></div></div>
 
     <section class="screen active" data-step="1">
-      <div class="hero">
-        <div class="eyebrow">카드 전략 시작</div>
-        <h1>내가 가진 카드로<br />월 소비를<br />어떻게 나눌까?</h1>
-        <p class="sub">카드별 현재 사용액이 아니라, 내가 가진 카드와 월평균 소비만 넣으면 사용 전략을 짜줍니다.</p>
-      </div>
-      <div class="panel">
-        <h2>월평균 소비</h2>
-        <div class="field"><label>한 달 평균 카드 사용금액</label><input id="monthlySpend" type="number" value="1200000" inputmode="numeric" /></div>
-        <div class="field"><label>소비 패턴</label><select id="pattern"><option selected>식비·카페가 많음</option><option>온라인쇼핑·구독이 많음</option><option>교통·통신이 많음</option><option>골고루 씀</option></select></div>
-        <div class="field"><label>우선순위</label><div class="chips" id="priorityChips"><button class="chip active" data-value="자동 추천">자동 추천<small>제일 무난하게</small></button><button class="chip" data-value="피킹률">혜택률 우선<small>최대한 뽑기</small></button><button class="chip" data-value="단순함">단순함 우선<small>카드 적게 쓰기</small></button><button class="chip" data-value="실적관리">실적관리<small>월 기준 맞추기</small></button></div></div>
+      <div class="hero"><div class="eyebrow">AI 카드 전략</div><h1>가진 카드와<br>월 소비만으로<br>전략을 짜요</h1><p class="sub">카드별 현재 사용액은 묻지 않습니다. 월평균 소비와 소유 카드만 받아서 gpt5.6-Luna가 배분 전략을 만듭니다.</p></div>
+      <div class="panel"><h2>월평균 소비</h2>
+        <div class="field"><label>한 달 평균 카드 사용금액</label><input id="monthlySpend" type="number" inputmode="numeric" value="1200000"></div>
+        <div class="field"><label>주 소비 패턴</label><select id="pattern"><option>식비·카페가 많음</option><option selected>온라인쇼핑·구독이 많음</option><option>교통·통신이 많음</option><option>골고루 씀</option></select></div>
+        <div class="field"><label>추천 방식</label><div class="chips" id="priorityChips"><button class="chip active" data-value="실사용 편의">실사용 편의<small>귀찮지 않게</small></button><button class="chip" data-value="혜택 극대화">혜택 극대화<small>피킹률 우선</small></button><button class="chip" data-value="카드 수 최소화">카드 수 최소화<small>1~2장만</small></button><button class="chip" data-value="실적 안정성">실적 안정성<small>월 기준 관리</small></button></div></div>
         <div class="actions single"><button onclick="nextStep()">다음</button></div>
       </div>
     </section>
 
     <section class="screen" data-step="2">
-      <div class="panel">
-        <h2>소유 카드 입력</h2>
-        <p class="sub">카드명을 대충 써도 됩니다. 앱이 알려진 카드/카테고리를 추론하고, 모르면 기본 전략으로 배치합니다.</p>
-        <div class="field"><label>내 카드 목록</label><textarea id="ownedCards">신한 Deep Dream
-현대카드 M
-국민 탄탄대로</textarea></div>
-        <div class="quick"><button onclick="setCards('신한 Deep Dream\n현대카드 M\n국민 탄탄대로')">샘플</button><button onclick="appendCard('삼성 iD ON')">삼성 추가</button><button onclick="appendCard('우리 카드의정석')">우리 추가</button></div>
-        <div class="field"><label>카드는 몇 장까지 쓸래요?</label><select id="maxCards"><option>1장만</option><option selected>2장까지</option><option>3장까지</option><option>상관없음</option></select></div>
-        <div class="field"><label>잘 모르는 카드 처리</label><select id="unknownMode"><option selected>보수적으로 배치</option><option>주력카드로 테스트</option><option>결과에서 제외</option></select></div>
-        <p class="autofill">상세 실적·할인율 입력은 나중에. 지금은 카드명 기반으로 첫 전략만 만듭니다.</p>
-        <div class="actions"><button class="secondary" onclick="prevStep()">이전</button><button onclick="nextStep(); calculate();">전략 보기</button></div>
+      <div class="panel"><h2>내 카드 선택</h2><p class="sub">직접 입력하지 않고 선택합니다. 필요한 만큼 추가해서 소유 카드만 고르세요.</p>
+        <div id="cardRows"></div>
+        <button class="small-btn" onclick="addCardRow()">카드 추가</button>
+        <div class="field"><label>몇 장까지 나눠 쓸까요?</label><select id="maxCards"><option>1장</option><option selected>2장</option><option>3장</option><option>제한 없음</option></select></div>
+        <div class="field"><label>카드 정보를 모를 때</label><select id="unknownMode"><option selected>AI가 일반 카드명 기준으로 추론</option><option>확실한 카드만 추천</option></select></div>
+        <div class="loading" id="loading"><span class="dot"></span>gpt5.6-Luna가 카드 조합을 분석 중</div>
+        <div class="error" id="errorBox"></div>
+        <div class="actions"><button class="secondary" onclick="prevStep()">이전</button><button id="recommendBtn" onclick="requestAI()">AI 전략 보기</button></div>
       </div>
     </section>
 
     <section class="screen" data-step="3">
-      <div class="hero"><div class="eyebrow">이번 달 사용 전략</div><h1 id="headline">카드별로<br />역할을 나눴어요</h1><p class="sub" id="guide">월평균 소비와 소유 카드 기준으로 배분했습니다.</p></div>
-      <div class="panel"><h2>요약</h2><div class="summary-grid"><div class="metric"><small>월평균 카드 사용</small><strong id="sumSpend">0원</strong></div><div class="metric"><small>주력 카드</small><strong id="mainCard">-</strong></div><div class="metric"><small>예상 전략</small><strong id="oneLine">-</strong></div></div></div>
-      <div class="panel"><h2>카드별 역할</h2><div id="strategies"></div><div class="actions"><button class="secondary" onclick="prevStep()">수정</button><button onclick="calculate(); showToast('다시 계산했어요')">다시 계산</button></div></div>
+      <div class="hero"><div class="eyebrow">AI 추천 결과</div><h1 id="headline">카드 전략을<br>만들었어요</h1><p class="sub" id="guide">추천 이유와 월 사용 배분을 함께 확인하세요.</p></div>
+      <div class="panel"><h2>요약</h2><div class="summary"><div class="metric"><small>월평균 사용</small><strong id="sumSpend">-</strong></div><div class="metric"><small>주력 카드</small><strong id="mainCard">-</strong></div><div class="metric"><small>전략 한 줄</small><strong id="oneLine">-</strong></div></div></div>
+      <div class="panel"><h2>카드별 역할</h2><div id="plans"></div><div class="actions"><button class="secondary" onclick="prevStep()">수정</button><button onclick="requestAI()">다시 추천</button></div></div>
     </section>
   </main>
-  <div id="toast" class="toast">완료</div>
 
   <script>
-    const fmt = n => new Intl.NumberFormat('ko-KR').format(Math.max(0, Math.round(n))) + '원';
-    let step = 1, priority = '자동 추천';
-    const cardDB = [
-      { key:'deep dream', name:'신한 Deep Dream', role:'생활비 베이스', categories:['식비','카페','편의점','교통'], min:300000, weight:0.38 },
-      { key:'현대카드 m', name:'현대카드 M', role:'온라인/구독', categories:['온라인쇼핑','구독','기타'], min:500000, weight:0.34 },
-      { key:'탄탄대로', name:'국민 탄탄대로', role:'고정비/통신', categories:['통신','교통','식비'], min:400000, weight:0.28 },
-      { key:'id on', name:'삼성 iD ON', role:'자주 쓰는 영역', categories:['카페','배달','온라인쇼핑'], min:300000, weight:0.32 },
-      { key:'카드의정석', name:'우리 카드의정석', role:'생활/간편결제', categories:['간편결제','식비','카페'], min:300000, weight:0.30 }
+    const cards = [
+      '신한 Deep Dream','신한 Mr.Life','신한 처음','현대카드 M','현대카드 ZERO','현대카드 the Green','현대카드 the Orange','국민 탄탄대로','KB국민 톡톡D','삼성 iD ON','삼성카드 taptap O','삼성카드 마일리지','롯데 LIKIT','우리 카드의정석','하나 MULTI Any','NH 올바른 FLEX','카카오뱅크 신한카드','토스뱅크 체크카드'
     ];
-    const patternBoost = { '식비·카페가 많음':['식비','카페','편의점'], '온라인쇼핑·구독이 많음':['온라인쇼핑','구독','간편결제'], '교통·통신이 많음':['교통','통신'], '골고루 씀':['식비','온라인쇼핑','교통','카페'] };
+    const fmt = n => new Intl.NumberFormat('ko-KR').format(Math.max(0, Math.round(Number(n)||0))) + '원';
+    let step = 1, priority = '실사용 편의';
 
     document.querySelectorAll('.chip').forEach(chip => chip.addEventListener('click', () => { chip.parentElement.querySelectorAll('.chip').forEach(c=>c.classList.remove('active')); chip.classList.add('active'); priority = chip.dataset.value; }));
-    function nextStep(){ step=Math.min(3,step+1); updateStep(); } function prevStep(){ step=Math.max(1,step-1); updateStep(); }
-    function updateStep(){ document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active', Number(s.dataset.step)===step)); document.getElementById('stepText').textContent=`${step} / 3`; document.getElementById('bar').style.width=`${step*33.333}%`; window.scrollTo({top:0,behavior:'smooth'}); }
-    function setCards(v){ document.getElementById('ownedCards').value=v; }
-    function appendCard(v){ const el=document.getElementById('ownedCards'); if(!el.value.includes(v)) el.value = (el.value.trim()+'\n'+v).trim(); }
-    function parseCards(){ return document.getElementById('ownedCards').value.split(/[\n,]/).map(v=>v.trim()).filter(Boolean).map(name=>{ const found=cardDB.find(c=>name.toLowerCase().includes(c.key)); return found ? {...found, input:name} : { name, input:name, role:'보조 카드', categories:['기타'], min:300000, weight:.18, unknown:true }; }); }
-    function capCount(){ const v=document.getElementById('maxCards').value; if(v==='1장만') return 1; if(v==='2장까지') return 2; if(v==='3장까지') return 3; return 99; }
-    function score(card, boosts){ return card.weight + card.categories.filter(c=>boosts.includes(c)).length*.16 + (card.unknown ? -.12 : 0) + (priority==='단순함' ? (card.weight>.32 ? .08 : -.03) : 0); }
-    function calculate(){
-      const spend=Number(document.getElementById('monthlySpend').value||0), pattern=document.getElementById('pattern').value, boosts=patternBoost[pattern]||[];
-      let cards=parseCards(); if(document.getElementById('unknownMode').value==='결과에서 제외') cards=cards.filter(c=>!c.unknown);
-      const selected=cards.sort((a,b)=>score(b,boosts)-score(a,boosts)).slice(0, capCount());
-      const totalWeight=selected.reduce((s,c)=>s+Math.max(.1,score(c,boosts)),0)||1;
-      let remain=spend;
-      const rows=selected.map((c,i)=>{ let amount=i===selected.length-1 ? remain : Math.min(remain, Math.max(c.min, spend*Math.max(.1,score(c,boosts))/totalWeight)); remain-=amount; return {...c, amount}; });
-      render(rows, spend, pattern);
-      showToast('전략 계산 완료');
+    function nextStep(){ step=Math.min(3, step+1); updateStep(); }
+    function prevStep(){ step=Math.max(1, step-1); updateStep(); }
+    function updateStep(){ document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active', Number(s.dataset.step)===step)); document.getElementById('stepText').textContent=`${step} / 3`; document.getElementById('bar').style.width=`${step*33.333}%`; window.scrollTo({top:0, behavior:'smooth'}); }
+    function cardOptions(selected=''){ return cards.map(c=>`<option ${c===selected?'selected':''}>${c}</option>`).join(''); }
+    function addCardRow(selected){ const count=document.querySelectorAll('.card-select').length; const row=document.createElement('div'); row.className='card-pick'; row.innerHTML=`<select class="card-select">${cardOptions(selected || cards[count % cards.length])}</select><button class="remove" onclick="this.parentElement.remove()">×</button>`; document.getElementById('cardRows').appendChild(row); }
+    ['현대카드 the Orange','현대카드 네이버','삼성카드 마일리지'].forEach(addCardRow);
+    function selectedCards(){ return [...document.querySelectorAll('.card-select')].map(s=>s.value).filter((v,i,a)=>v && a.indexOf(v)===i); }
+    function setLoading(on){ document.getElementById('loading').classList.toggle('on', on); document.getElementById('recommendBtn').disabled=on; }
+    function showError(msg){ const el=document.getElementById('errorBox'); el.textContent=msg; el.classList.toggle('on', !!msg); }
+
+    async function requestAI(){
+      showError(''); setLoading(true);
+      const payload = { monthlySpend:Number(document.getElementById('monthlySpend').value||0), pattern:document.getElementById('pattern').value, priority, maxCards:document.getElementById('maxCards').value, unknownMode:document.getElementById('unknownMode').value, ownedCards:selectedCards() };
+      try {
+        if (!payload.ownedCards.length) throw new Error('카드를 1개 이상 선택해 주세요.');
+        const res = await fetch('/api/recommend', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'AI 추천 생성 실패');
+        render(data, payload); step = 3; updateStep();
+      } catch (e) { showError(e.message); }
+      finally { setLoading(false); }
     }
-    function render(rows, spend, pattern){
-      const main=rows[0]; document.getElementById('sumSpend').textContent=fmt(spend); document.getElementById('mainCard').textContent=main?.name||'-';
-      document.getElementById('oneLine').textContent=main ? `${main.name}에 ${fmt(main.amount)} 중심` : '-';
-      document.getElementById('headline').innerHTML = main ? `${main.name}<br />주력으로 쓰세요` : '카드를 입력해 주세요';
-      document.getElementById('guide').textContent = main ? `${pattern} 패턴이면 ${main.name}을 주력으로 두고, 나머지는 역할별로 나누는 게 좋습니다.` : '카드 목록을 입력하면 전략을 만듭니다.';
-      document.getElementById('strategies').innerHTML = rows.map((c,i)=>`<article class="strategy"><div class="strategy-top"><strong>${i+1}. ${c.name}</strong><span class="badge">${c.role}</span></div><div class="amount">${fmt(c.amount)} 정도</div><p class="reason">${i===0?'월 소비의 중심 카드. ':''}${c.min?`실적 기준 ${fmt(c.min)} 전후를 먼저 맞추고, `:''}${c.categories.join('·')} 소비에 배치하세요.</p><div class="tags">${c.categories.map(t=>`<span class="tag">${t}</span>`).join('')}</div></article>`).join('') || '<p class="sub">쓸 카드가 없습니다.</p>';
+    function render(data, payload){
+      const main = data.recommendations?.[0];
+      document.getElementById('sumSpend').textContent = fmt(payload.monthlySpend);
+      document.getElementById('mainCard').textContent = main?.card || '-';
+      document.getElementById('oneLine').textContent = data.summary || '-';
+      document.getElementById('headline').innerHTML = main ? `${main.card}<br>주력 추천` : '추천 결과';
+      document.getElementById('guide').textContent = data.rationale || 'AI가 카드별 역할을 정리했습니다.';
+      document.getElementById('plans').innerHTML = (data.recommendations || []).map((r,i)=>`<article class="plan"><div class="plan-top"><strong>${i+1}. ${r.card}</strong><span class="badge">${r.role || '추천'}</span></div><div class="money">${fmt(r.monthlyAmount)}</div><p class="reason">${r.reason || ''}</p><div class="tags">${(r.categories||[]).map(t=>`<span class="tag">${t}</span>`).join('')}</div></article>`).join('');
     }
-    function showToast(text){ const t=document.getElementById('toast'); t.textContent=text; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),1100); }
-    calculate();
   </script>
 </body>
 </html>
