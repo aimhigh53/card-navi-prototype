@@ -30,7 +30,8 @@
     .chip { border:1px solid #e0e7f0; background:#fbfcff; color:#273142; border-radius:17px; padding:13px 12px; text-align:left; font-weight:900; cursor:pointer; }
     .chip small { display:block; color:#7a8494; font-weight:750; margin-top:2px; }
     .chip.active { background:#101318; color:#fff; border-color:#101318; } .chip.active small { color:#cbd5e1; }
-    .card-pick { display:grid; grid-template-columns:1fr 44px; gap:8px; margin-top:10px; }
+    .card-pick { display:grid; grid-template-columns:1fr 1.25fr 44px; gap:8px; margin-top:10px; }
+    @media (max-width:380px){ .card-pick { grid-template-columns:1fr; } .remove{height:44px;} }
     .remove { padding:0; border-radius:15px; background:#f1f5f9; color:#334155; }
     .small-btn { padding:11px 13px; border-radius:999px; font-size:13px; background:#eef2ff; color:#3345b8; }
     .actions { display:grid; grid-template-columns:1fr 1.55fr; gap:9px; margin-top:18px; } .actions.single { grid-template-columns:1fr; }
@@ -72,7 +73,7 @@
     </section>
 
     <section class="screen" data-step="2">
-      <div class="panel"><h2>내 카드 선택</h2><p class="sub">직접 입력하지 않고 선택합니다. 필요한 만큼 추가해서 소유 카드만 고르세요.</p>
+      <div class="panel"><h2>내 카드 선택</h2><p class="sub">먼저 카드사를 고르면, 그 카드사의 카드만 나옵니다. 보유 카드만 빠르게 추가하세요.</p>
         <div id="cardRows"></div>
         <button class="small-btn" onclick="addCardRow()">카드 추가</button>
         <div class="field"><label>몇 장까지 나눠 쓸까요?</label><select id="maxCards"><option>1장</option><option selected>2장</option><option>3장</option><option>제한 없음</option></select></div>
@@ -91,9 +92,21 @@
   </main>
 
   <script>
-    const cards = [
-      '신한 Deep Dream','신한 Mr.Life','신한 처음','현대카드 M','현대카드 ZERO','현대카드 the Green','현대카드 the Orange','국민 탄탄대로','KB국민 톡톡D','삼성 iD ON','삼성카드 taptap O','삼성카드 마일리지','롯데 LIKIT','우리 카드의정석','하나 MULTI Any','NH 올바른 FLEX','카카오뱅크 신한카드','토스뱅크 체크카드'
-    ];
+    const issuerCards = {
+      '신한카드': ['신한 Deep Dream','신한 Mr.Life','신한 처음','신한카드 Edu','신한카드 The BEST-F','신한카드 Puzzle','신한카드 Shopping','카카오뱅크 신한카드','신한카드 Air One','신한카드 B.Big'],
+      '현대카드': ['현대카드 M','현대카드 ZERO Edition3','현대카드 the Green Edition2','현대카드 the Red Edition5','현대카드 the Orange','현대카드 네이버','현대카드 애플페이','현대카드 대한항공카드 030','현대카드 Z family','현대카드 Z work'],
+      '삼성카드': ['삼성 iD ON','삼성 iD SIMPLE','삼성 iD PET','삼성 iD NOMAD','삼성카드 taptap O','삼성카드 taptap DRIVE','삼성카드 & MILEAGE PLATINUM','삼성카드 아메리칸 익스프레스 블루','삼성카드 디지털프라자','삼성카드 국민행복'],
+      'KB국민카드': ['국민 탄탄대로 올쇼핑','KB국민 톡톡D','KB국민 청춘대로 톡톡','KB국민 다담카드','KB국민 My WE:SH','KB국민 굿데이카드','KB국민 Easy pick','KB국민 Easy all','KB국민 알파원카드','KB국민 가온올림카드'],
+      '롯데카드': ['롯데 LOCA 365','롯데 LIKIT all','롯데 LIKIT FUN','롯데 LOCA LIKIT','롯데 LOCA MONEY','롯데 LOCA CLASSIC','롯데 I’m WONDERFUL','롯데 TELLO SE','롯데카드 Trip to 로카','롯데카드 디지로카 London'],
+      '우리카드': ['우리 카드의정석 EVERY 1','우리 카드의정석 POINT','우리 DA@카드의정석','우리 NU Uniq','우리 NU Blanc','우리 알뜰교통카드','우리 쿠키체크','우리 카드의정석 Shopping','우리 카드의정석 UniMile','우리 카드의정석 Premium'],
+      '하나카드': ['하나 MULTI Any','하나 MULTI Young','하나 원더카드 FREE','하나 원더카드 DAILY','하나 원더카드 LIVING','하나 Club SK','하나 1Q Daily+','하나 트래블로그','하나 SMART ANY','하나 모두의 쇼핑'],
+      'NH농협카드': ['NH 올바른 FLEX','NH 올바른 POINT UP','NH 올바른 LIFE','NH zgm.고향으로','NH zgm.the pay','NH 별다줄카드','NH 올바른 NEW HAVE','NH 올원 파이카드','NH 라이언 치즈 체크','NH채움카드'],
+      'BC카드': ['BC 바로 클리어 플러스','BC 바로 리워드 플러스','BC 바로 에어 플러스','BC 바로 K-패스','BC 시발카드','BC 페이북 머니 체크','BC 글로벌카드','BC 그린카드','BC TOP포인트카드','BC BLISS.7'],
+      'IBK기업은행': ['IBK Oil & Life','IBK 일상의 기쁨카드','IBK 무민카드','IBK 참 좋은 친구카드','IBK BLISS.5','IBK DC히어로즈','IBK 쇼핑앤조이','IBK I-ALL','IBK 나라사랑카드','IBK 알뜰교통카드'],
+      '카카오뱅크': ['카카오뱅크 신한카드','카카오뱅크 KB국민카드','카카오뱅크 삼성카드','카카오뱅크 롯데카드','카카오뱅크 프렌즈 체크카드'],
+      '토스뱅크': ['토스뱅크 체크카드','토스뱅크 모임카드','토스뱅크 하나카드 Wide','토스뱅크 KB국민카드','토스뱅크 신용카드']
+    };
+    const issuers = Object.keys(issuerCards);
     const fmt = n => new Intl.NumberFormat('ko-KR').format(Math.max(0, Math.round(Number(n)||0))) + '원';
     let step = 1, priority = '실사용 편의';
 
@@ -101,10 +114,24 @@
     function nextStep(){ step=Math.min(3, step+1); updateStep(); }
     function prevStep(){ step=Math.max(1, step-1); updateStep(); }
     function updateStep(){ document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active', Number(s.dataset.step)===step)); document.getElementById('stepText').textContent=`${step} / 3`; document.getElementById('bar').style.width=`${step*33.333}%`; window.scrollTo({top:0, behavior:'smooth'}); }
-    function cardOptions(selected=''){ return cards.map(c=>`<option ${c===selected?'selected':''}>${c}</option>`).join(''); }
-    function addCardRow(selected){ const count=document.querySelectorAll('.card-select').length; const row=document.createElement('div'); row.className='card-pick'; row.innerHTML=`<select class="card-select">${cardOptions(selected || cards[count % cards.length])}</select><button class="remove" onclick="this.parentElement.remove()">×</button>`; document.getElementById('cardRows').appendChild(row); }
-    ['현대카드 the Orange','현대카드 네이버','삼성카드 마일리지'].forEach(addCardRow);
-    function selectedCards(){ return [...document.querySelectorAll('.card-select')].map(s=>s.value).filter((v,i,a)=>v && a.indexOf(v)===i); }
+    function issuerOptions(selected=''){ return issuers.map(i=>`<option ${i===selected?'selected':''}>${i}</option>`).join(''); }
+    function cardOptions(issuer, selected=''){ return (issuerCards[issuer] || []).map(c=>`<option ${c===selected?'selected':''}>${c}</option>`).join(''); }
+    function refreshCardSelect(issuerSelect){
+      const row = issuerSelect.closest('.card-pick');
+      const cardSelect = row.querySelector('.card-select');
+      cardSelect.innerHTML = cardOptions(issuerSelect.value);
+    }
+    function addCardRow(defaultIssuer, defaultCard){
+      const count=document.querySelectorAll('.card-select').length;
+      const issuer = defaultIssuer || issuers[count % issuers.length];
+      const card = defaultCard || issuerCards[issuer][0];
+      const row=document.createElement('div');
+      row.className='card-pick';
+      row.innerHTML=`<select class="issuer-select" onchange="refreshCardSelect(this)">${issuerOptions(issuer)}</select><select class="card-select">${cardOptions(issuer, card)}</select><button class="remove" onclick="this.parentElement.remove()">×</button>`;
+      document.getElementById('cardRows').appendChild(row);
+    }
+    addCardRow('현대카드','현대카드 the Orange'); addCardRow('신한카드','신한 Deep Dream'); addCardRow('삼성카드','삼성카드 & MILEAGE PLATINUM');
+    function selectedCards(){ return [...document.querySelectorAll('.card-pick')].map(row=>`${row.querySelector('.issuer-select').value} ${row.querySelector('.card-select').value}`).filter((v,i,a)=>v && a.indexOf(v)===i); }
     function setLoading(on){ document.getElementById('loading').classList.toggle('on', on); document.getElementById('recommendBtn').disabled=on; }
     function showError(msg){ const el=document.getElementById('errorBox'); el.textContent=msg; el.classList.toggle('on', !!msg); }
 
