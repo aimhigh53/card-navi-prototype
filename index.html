@@ -5,56 +5,58 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>카드내비 AI</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans KR", sans-serif; background:#f3f6fb; color:#101318; }
-    .app { max-width:430px; min-height:100dvh; margin:0 auto; padding:18px 16px 28px; }
-    .top { display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; }
-    .brand { font-weight:950; font-size:22px; letter-spacing:-.055em; }
-    .step { padding:7px 10px; border-radius:999px; background:#eef2ff; color:#4353d6; font-weight:900; font-size:12px; }
-    .progress { height:6px; border-radius:999px; background:#e5ebf3; overflow:hidden; margin-bottom:16px; }
-    .bar { height:100%; width:33.3%; background:#101318; transition:.22s; }
-    .screen { display:none; } .screen.active { display:block; animation:enter .18s ease; }
-    @keyframes enter { from{opacity:0; transform:translateY(8px)} to{opacity:1; transform:translateY(0)} }
-    .hero,.panel { background:#fff; border:1px solid #e4e9f1; border-radius:28px; box-shadow:0 18px 48px rgba(15,23,42,.07); }
-    .hero { padding:24px; margin-bottom:12px; }
-    .panel { padding:18px; margin-top:12px; }
-    .eyebrow { color:#5267f5; font-weight:950; font-size:13px; margin-bottom:10px; }
-    h1 { font-size:34px; line-height:1.04; letter-spacing:-.065em; margin-bottom:12px; }
-    h2 { font-size:24px; letter-spacing:-.045em; margin-bottom:8px; }
-    .sub { color:#667085; font-size:15px; line-height:1.55; }
-    .field { margin-top:16px; display:grid; gap:8px; }
-    label { font-weight:850; color:#596273; font-size:13px; }
-    input,select { width:100%; border:1px solid #dbe2ed; border-radius:17px; padding:15px 14px; font-size:17px; background:#fff; color:#101318; outline:none; }
-    input:focus,select:focus { border-color:#5367f5; box-shadow:0 0 0 4px rgba(83,103,245,.12); }
-    .chips { display:grid; grid-template-columns:1fr 1fr; gap:9px; margin-top:10px; }
-    .chip { border:1px solid #e0e7f0; background:#fbfcff; color:#273142; border-radius:17px; padding:13px 12px; text-align:left; font-weight:900; cursor:pointer; }
-    .chip small { display:block; color:#7a8494; font-weight:750; margin-top:2px; }
-    .chip.active { background:#101318; color:#fff; border-color:#101318; } .chip.active small { color:#cbd5e1; }
-    .card-pick { display:grid; grid-template-columns:1fr 1.25fr 44px; gap:8px; margin-top:10px; }
-    @media (max-width:380px){ .card-pick { grid-template-columns:1fr; } .remove{height:44px;} }
-    .remove { padding:0; border-radius:15px; background:#f1f5f9; color:#334155; }
-    .small-btn { padding:11px 13px; border-radius:999px; font-size:13px; background:#eef2ff; color:#3345b8; }
-    .actions { display:grid; grid-template-columns:1fr 1.55fr; gap:9px; margin-top:18px; } .actions.single { grid-template-columns:1fr; }
-    button { border:0; border-radius:18px; padding:15px 16px; background:#101318; color:white; font-size:16px; font-weight:950; cursor:pointer; }
-    button.secondary { background:#eef2ff; color:#3345b8; }
-    button:disabled { opacity:.55; cursor:not-allowed; }
-    .summary { display:grid; gap:10px; margin-top:12px; }
-    .metric { background:#f8fafc; border:1px solid #edf1f6; border-radius:19px; padding:15px; }
-    .metric small { color:#687385; font-weight:850; display:block; margin-bottom:4px; }
-    .metric strong { font-size:21px; letter-spacing:-.04em; }
-    .plan { border:1px solid #e7edf5; border-radius:21px; padding:16px; background:#fff; margin-top:10px; }
-    .plan-top { display:flex; justify-content:space-between; gap:10px; align-items:flex-start; }
-    .badge { white-space:nowrap; font-size:12px; font-weight:950; padding:7px 10px; border-radius:999px; background:#ecfdf5; color:#047857; }
-    .money { font-size:28px; font-weight:950; letter-spacing:-.05em; margin-top:8px; }
-    .reason { color:#414b5a; font-size:14px; line-height:1.55; margin-top:4px; }
-    .tags { display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; }
-    .tag { padding:6px 9px; border-radius:999px; background:#f1f5f9; color:#475569; font-size:12px; font-weight:850; }
-    .loading { display:none; align-items:center; gap:8px; color:#596273; font-size:14px; margin-top:12px; }
-    .loading.on { display:flex; }
-    .dot { width:8px; height:8px; border-radius:50%; background:#5367f5; animation:pulse .8s infinite alternate; }
-    @keyframes pulse { to { transform:scale(1.5); opacity:.5; } }
-    .error { display:none; margin-top:12px; padding:13px; border-radius:16px; background:#fff1f2; color:#be123c; font-weight:800; font-size:14px; line-height:1.45; }
-    .error.on { display:block; }
+    :root{
+      --bg:#f7f8fb; --ink:#101319; --muted:#6d7482; --line:#e8edf4; --blue:#3182f6;
+      --blue2:#1b64da; --card:#fff; --soft:#f1f5fb; --green:#00a661; --red:#e5484d;
+    }
+    body{
+      font-family:'Inter',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans KR",sans-serif;
+      background: radial-gradient(circle at 50% -10%, #eaf3ff 0, #f7f8fb 330px);
+      color:var(--ink); letter-spacing:-.02em;
+    }
+    .app{max-width:430px; min-height:100dvh; margin:0 auto; padding:18px 16px 104px;}
+    .top{position:sticky; top:0; z-index:20; display:flex; justify-content:space-between; align-items:center; padding:8px 0 14px; backdrop-filter:blur(16px);}
+    .brand{font-size:21px; font-weight:900; letter-spacing:-.06em; display:flex; align-items:center; gap:8px;}
+    .brand:before{content:''; width:26px; height:26px; border-radius:9px; background:linear-gradient(135deg,var(--blue),#8bb8ff); box-shadow:0 8px 22px rgba(49,130,246,.25);}
+    .step{font-size:12px; font-weight:800; color:var(--blue2); background:#eaf3ff; padding:7px 11px; border-radius:999px;}
+    .progress{height:5px; background:#e6edf7; border-radius:999px; overflow:hidden; margin:0 0 18px;}
+    .bar{height:100%; width:33.3%; background:linear-gradient(90deg,var(--blue),#6aa8ff); border-radius:999px; transition:.28s cubic-bezier(.2,.8,.2,1);}
+    .screen{display:none;} .screen.active{display:block; animation:enter .2s ease;}
+    @keyframes enter{from{opacity:0; transform:translateY(10px)}to{opacity:1; transform:translateY(0)}}
+    .hero{padding:24px 4px 16px;}
+    .eyebrow{display:inline-flex; align-items:center; gap:6px; color:var(--blue2); background:#eaf3ff; padding:7px 10px; border-radius:999px; font-size:12px; font-weight:850; margin-bottom:14px;}
+    h1{font-size:34px; line-height:1.04; letter-spacing:-.075em; font-weight:900; margin-bottom:12px;}
+    h2{font-size:22px; line-height:1.2; letter-spacing:-.055em; font-weight:900; margin-bottom:6px;}
+    .sub{color:var(--muted); font-size:15px; line-height:1.58; letter-spacing:-.025em;}
+    .panel{background:rgba(255,255,255,.86); border:1px solid rgba(226,232,240,.85); border-radius:26px; padding:18px; margin-top:12px; box-shadow:0 16px 40px rgba(28,39,60,.07); backdrop-filter:blur(18px);}
+    .field{margin-top:16px; display:grid; gap:8px;}
+    label{font-size:13px; font-weight:800; color:#4b5565;}
+    input,select{width:100%; height:54px; border:1px solid #e1e8f2; border-radius:18px; padding:0 15px; font-size:17px; font-weight:700; background:#fff; color:var(--ink); outline:none; box-shadow:0 1px 0 rgba(16,19,25,.03);}
+    select{appearance:none; background-image:linear-gradient(45deg,transparent 50%,#8a94a6 50%),linear-gradient(135deg,#8a94a6 50%,transparent 50%); background-position:calc(100% - 18px) 23px,calc(100% - 13px) 23px; background-size:5px 5px,5px 5px; background-repeat:no-repeat; padding-right:34px; white-space:nowrap; text-overflow:ellipsis;}
+    input:focus,select:focus{border-color:var(--blue); box-shadow:0 0 0 4px rgba(49,130,246,.12);}
+    .chips{display:grid; grid-template-columns:1fr 1fr; gap:9px; margin-top:10px;}
+    .chip{min-height:68px; border:1px solid #e4ebf5; background:#fff; color:#222936; border-radius:20px; padding:13px; text-align:left; font-size:15px; font-weight:900; cursor:pointer; box-shadow:0 6px 18px rgba(30,41,59,.04);}
+    .chip small{display:block; color:#7d8796; font-size:12px; font-weight:750; margin-top:3px; letter-spacing:-.02em;}
+    .chip.active{border-color:#b8d7ff; background:linear-gradient(180deg,#eff6ff,#fff); color:#0b57c2; box-shadow:inset 0 0 0 1px rgba(49,130,246,.18),0 10px 24px rgba(49,130,246,.10);} .chip.active small{color:#3972c6;}
+    .card-pick{position:relative; display:grid; grid-template-columns:.72fr 1.28fr; gap:8px; padding:38px 12px 12px; margin-top:10px; border:1px solid #e7edf5; border-radius:22px; background:#fbfdff;}
+    .card-pick:before{content:'보유 카드'; position:absolute; left:14px; top:13px; font-size:12px; font-weight:900; color:#7a8494;}
+    .card-pick select{height:48px; font-size:14px; border-radius:16px; padding-left:12px; padding-right:28px;}
+    .remove{position:absolute; right:10px; top:8px; width:32px; height:32px; padding:0; border-radius:999px; background:#fff1f2; color:#e5484d; font-size:17px; box-shadow:none;}
+    .small-btn{width:100%; margin-top:10px; padding:14px; border-radius:18px; font-size:15px; background:#edf6ff; color:#0b57c2;}
+    .actions{position:fixed; left:50%; bottom:0; z-index:30; width:min(430px,100%); transform:translateX(-50%); display:grid; grid-template-columns:1fr 1.7fr; gap:9px; padding:12px 16px calc(14px + env(safe-area-inset-bottom)); background:linear-gradient(180deg,rgba(247,248,251,0),rgba(247,248,251,.96) 28%,#f7f8fb);}
+    .actions.single{grid-template-columns:1fr;}
+    button{border:0; border-radius:19px; padding:16px; background:var(--blue); color:white; font-size:16px; font-weight:900; cursor:pointer; box-shadow:0 10px 24px rgba(49,130,246,.22);}
+    button.secondary{background:#fff; color:#475467; border:1px solid #e5ebf3; box-shadow:0 8px 18px rgba(20,30,45,.06);} button:disabled{opacity:.55; cursor:not-allowed;}
+    .summary{display:grid; gap:10px; margin-top:12px;}
+    .metric{background:#f8fbff; border:1px solid #e7edf5; border-radius:20px; padding:15px;}
+    .metric small{color:#697386; font-size:12px; font-weight:850; display:block; margin-bottom:4px;}.metric strong{font-size:21px; font-weight:900; letter-spacing:-.05em;}
+    .plan{border:1px solid #e7edf5; border-radius:22px; padding:16px; background:#fff; margin-top:10px; box-shadow:0 8px 22px rgba(30,41,59,.04);}
+    .plan-top{display:flex; justify-content:space-between; gap:10px; align-items:flex-start;}.badge{white-space:nowrap; font-size:11px; font-weight:900; padding:7px 9px; border-radius:999px; background:#eafaf1; color:#087443;}
+    .money{font-size:28px; font-weight:950; letter-spacing:-.06em; margin-top:8px;}.reason{color:#4b5565; font-size:14px; line-height:1.55; margin-top:5px;}.tags{display:flex; flex-wrap:wrap; gap:6px; margin-top:10px;}.tag{padding:6px 9px; border-radius:999px; background:#f1f5f9; color:#475569; font-size:12px; font-weight:850;}
+    .loading{display:none; align-items:center; gap:8px; color:#596273; font-size:14px; margin-top:12px;}.loading.on{display:flex}.dot{width:8px;height:8px;border-radius:50%;background:var(--blue);animation:pulse .8s infinite alternate}@keyframes pulse{to{transform:scale(1.5);opacity:.5}}
+    .error{display:none; margin-top:12px; padding:13px; border-radius:17px; background:#fff1f2; color:#be123c; font-weight:800; font-size:14px; line-height:1.45;}.error.on{display:block}
   </style>
 </head>
 <body>
@@ -63,7 +65,7 @@
     <div class="progress"><div class="bar" id="bar"></div></div>
 
     <section class="screen active" data-step="1">
-      <div class="hero"><div class="eyebrow">AI 카드 전략</div><h1>가진 카드와<br>월 소비만으로<br>전략을 짜요</h1><p class="sub">카드별 현재 사용액은 묻지 않습니다. 월평균 소비와 소유 카드만 받아서 gpt5.6-Luna가 배분 전략을 만듭니다.</p></div>
+      <div class="hero"><div class="eyebrow">AI 카드 전략</div><h1>카드 몇 장만<br>고르면<br>AI가 나눠줘요</h1><p class="sub">월평균 사용금액과 보유 카드만 선택하면 gpt5.6-Luna가 카드별 사용 금액과 역할을 추천합니다.</p></div>
       <div class="panel"><h2>월평균 소비</h2>
         <div class="field"><label>한 달 평균 카드 사용금액</label><input id="monthlySpend" type="number" inputmode="numeric" value="1200000"></div>
         <div class="field"><label>주 소비 패턴</label><select id="pattern"><option>식비·카페가 많음</option><option selected>온라인쇼핑·구독이 많음</option><option>교통·통신이 많음</option><option>골고루 씀</option></select></div>
@@ -73,11 +75,10 @@
     </section>
 
     <section class="screen" data-step="2">
-      <div class="panel"><h2>내 카드 선택</h2><p class="sub">먼저 카드사를 고르면, 그 카드사의 카드만 나옵니다. 보유 카드만 빠르게 추가하세요.</p>
+      <div class="panel"><h2>내 카드 선택</h2><p class="sub">카드사 → 카드명 순서로 선택합니다. 긴 텍스트 입력 없이 보유 카드만 추가하세요.</p>
         <div id="cardRows"></div>
         <button class="small-btn" onclick="addCardRow()">카드 추가</button>
         <div class="field"><label>몇 장까지 나눠 쓸까요?</label><select id="maxCards"><option>1장</option><option selected>2장</option><option>3장</option><option>제한 없음</option></select></div>
-        <div class="field"><label>카드 정보를 모를 때</label><select id="unknownMode"><option selected>AI가 일반 카드명 기준으로 추론</option><option>확실한 카드만 추천</option></select></div>
         <div class="loading" id="loading"><span class="dot"></span>gpt5.6-Luna가 카드 조합을 분석 중</div>
         <div class="error" id="errorBox"></div>
         <div class="actions"><button class="secondary" onclick="prevStep()">이전</button><button id="recommendBtn" onclick="requestAI()">AI 전략 보기</button></div>
@@ -137,7 +138,7 @@
 
     async function requestAI(){
       showError(''); setLoading(true);
-      const payload = { monthlySpend:Number(document.getElementById('monthlySpend').value||0), pattern:document.getElementById('pattern').value, priority, maxCards:document.getElementById('maxCards').value, unknownMode:document.getElementById('unknownMode').value, ownedCards:selectedCards() };
+      const payload = { monthlySpend:Number(document.getElementById('monthlySpend').value||0), pattern:document.getElementById('pattern').value, priority, maxCards:document.getElementById('maxCards').value, unknownMode:'AI가 일반 카드명 기준으로 추론', ownedCards:selectedCards() };
       try {
         if (!payload.ownedCards.length) throw new Error('카드를 1개 이상 선택해 주세요.');
         const res = await fetch('/api/recommend', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) });
